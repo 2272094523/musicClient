@@ -14,6 +14,9 @@ export const mixin = {
     },
     //生日格式改变.去掉最后的时间，分，秒
     changeTimeFormat(Singer_sex){
+      if (Singer_sex==null||Singer_sex===''){
+        return '暂无';
+      }
       return String(Singer_sex).substr(0,10);
     },
     uploadSuccess(res,file){

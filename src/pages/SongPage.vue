@@ -1,140 +1,141 @@
 <template>
-    <div class="table">
-        <div class="crumbs">
-            <i class="el-icon-tickets"></i>歌曲信息
-        </div>
-        <div class="container">
-            <div class="handle-box">
-                <el-button type="primary" size="medium" @click="insertDialogVisible=true">添加歌曲</el-button>
-                <el-button type="danger" size="medium" @click="delAllRow">批量删除</el-button>
-                <el-input placeholder="搜索歌曲" clearable
-                          style="width: 200px;margin-left: 40px; display:inline-block" v-model="fuzzyName"></el-input>
-            </div>
-        </div>
-        <div>
-          {{this.$route.query.singer_name}}
-        </div>
-        <el-table size="mini" border style="width: 100%" height="700px" :data="data"
-                  @selection-change="handleSelectionDelete">
-            <el-table-column type="selection" width="40px"></el-table-column>
-            <el-table-column label="歌曲图片" width="110px" align="center">
-                <template slot-scope="scope">
-                    <div class="song-img">
-                        <img :src="getImgUrl(scope.row.song_img)" style="width: 100%">
-                    </div>
-                    <div class="play" @click="setSongUrl(scope.row.song_url,scope.row.name)">
-                        <div v-if="toggle == scope.row.name">
-                            <svg class="icon">
-                                <use xlink:href="#icon-zanting"></use>
-                            </svg>
-                        </div>
-                        <div v-if="toggle !== scope.row.name">
-                            <svg class="icon">
-                                <use xlink:href="#icon-bofanganniu"></use>
-                            </svg>
-                        </div>
-                    </div>
-                    <el-upload :action="uploadSongImg(scope.row.song_id)" :on-success="uploadSuccess"
-                               :before-upload="beforeUpload">
-                        <el-button size="mini">上传</el-button>
-                    </el-upload>
-                </template>
-            </el-table-column>
+  <div class="table">
+    <div class="crumbs">
+      <i class="el-icon-tickets"></i>歌曲信息
+    </div>
+    <div class="container">
+      <div class="handle-box">
+        <el-button type="primary" size="medium" @click="insertDialogVisible=true">添加歌曲</el-button>
+        <el-button type="danger" size="medium" @click="delAllRow">批量删除</el-button>
+        <el-input placeholder="搜索歌曲" clearable
+                  style="width: 200px;margin-left: 40px; display:inline-block" v-model="fuzzyName"></el-input>
+      </div>
+      <div>
+        当前歌手：{{this.$route.query.singer_name}}
+      </div>
+    </div>
 
-            <el-table-column prop="song_name" width="120px" align="center" label="歌名"></el-table-column>
-            <el-table-column prop="song_singerName" label="唱作者" align="center" width="100px"></el-table-column>
-            <el-table-column prop="song_createTime" label="添加日期" align="center" width="150px">
-                <template slot-scope="scope">{{changeTimeFormat(scope.row.song_createTime)}}</template>
-            </el-table-column>
-            <el-table-column prop="song_updateTime" label="最后一次修改日期" align="center" width="150px">
-                <template slot-scope="scope">{{changeTimeFormat(scope.row.song_updateTime)}}</template>
-            </el-table-column>
-            <el-table-column prop="song_introduction" label="专辑" align="center" width="150px"></el-table-column>
-            <el-table-column prop="song_lyric" label="歌词" align="center">
-                <template slot-scope="scope">
-                    <ul style="height: 100px;overflow: scroll">
-                        <li v-for="(item,index) in changeLyricFormat(scope.row.song_lyric)" :key="index">
-                            {{item}}
-                        </li>
-                    </ul>
-                </template>
-            </el-table-column>
-            <el-table-column label="信息操作" width="100px" align="center">
-                <template slot-scope="scope">
-                    <el-button size="mini" @click="changeSong(scope.row)" type="primary">编辑</el-button>
-                </template>
-            </el-table-column>
-            <el-table-column label="文件操作" width="120px" align="center">
-                <template slot-scope="scope">
-                    <el-upload :action="uploadSongFile(scope.row.song_id)" :on-success="uploadFileSuccess"
-                               :before-upload="beforeUploadFile">
-                        <el-button size="mini" type="danger">更改文件</el-button>
-                    </el-upload>
-                </template>
-            </el-table-column>
-            <el-table-column label="删除" width="150px" align="center">
-                <template slot-scope="scope">
-                    <el-button type="danger" @click="handleDelete(scope.row.song_id)">删除</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
-        <div class="pageNation">
-            <el-pagination background layout="total,prev,pager,next"
-                           :current-page="currentPage" :total="ListSong.length" :page-size="pageSize"
-                           @current-change="getCurrentPageData"></el-pagination>
-        </div>
-        <el-dialog title="添加歌曲(文件格式名为 歌手 - 歌名.mp3)" :visible.sync="insertDialogVisible" width="400px" center>
-            <el-form :model="addSong" ref="addSongForm" label-width="100px" :rules="formRules">
-                <el-form-item prop="song_name" label="歌名" size="mini">
-                    <el-input v-model="addSong.song_name" placeholder="歌名"></el-input>
-                </el-form-item>
-                <el-form-item prop="song_singerName" label="唱作者" size="mini">
-                    <el-input v-model="this.$route.query.singer_name" disabled></el-input>
-                </el-form-item>
-                <el-form-item prop="song_introduction" label="专辑" size="mini">
-                    <el-input v-model="addSong.song_introduction" placeholder="专辑"></el-input>
-                </el-form-item>
-                <el-form-item prop="song_lyric" label="歌词">
-                    <el-input v-model="addSong.song_lyric" placeholder="歌词" type="textarea"></el-input>
-                </el-form-item>
-                <input type="file" @change="getFile($event)">
-            </el-form>
-            <span slot="footer">
+    <el-table size="mini" border style="width: 100%" height="700px" :data="data"
+              @selection-change="handleSelectionDelete">
+      <el-table-column type="selection" width="40px"></el-table-column>
+      <el-table-column label="歌曲图片" width="110px" align="center">
+        <template slot-scope="scope">
+          <div class="song-img">
+            <img :src="getImgUrl(scope.row.song_img)" style="width: 100%">
+          </div>
+          <div class="play" @click="setSongUrl(scope.row.song_url,scope.row.name)">
+            <div v-if="toggle == scope.row.name">
+              <svg class="icon">
+                <use xlink:href="#icon-zanting"></use>
+              </svg>
+            </div>
+            <div v-if="toggle !== scope.row.name">
+              <svg class="icon">
+                <use xlink:href="#icon-bofanganniu"></use>
+              </svg>
+            </div>
+          </div>
+          <el-upload :action="uploadSongImg(scope.row.song_id)" :on-success="uploadSuccess"
+                     :before-upload="beforeUpload">
+            <el-button size="mini">上传</el-button>
+          </el-upload>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="song_name" width="120px" align="center" label="歌名"></el-table-column>
+      <el-table-column prop="singer.singer_name" label="唱作者" align="center" width="100px"></el-table-column>
+      <el-table-column prop="song_createTime" label="添加日期" align="center" width="150px">
+        <template slot-scope="scope">{{changeTimeFormat(scope.row.song_createTime)}}</template>
+      </el-table-column>
+      <el-table-column prop="song_updateTime" label="最后一次修改日期" align="center" width="150px">
+        <template slot-scope="scope">{{changeTimeFormat(scope.row.song_updateTime)}}</template>
+      </el-table-column>
+      <el-table-column prop="song_introduction" label="专辑" align="center" width="150px"></el-table-column>
+      <el-table-column prop="song_lyric" label="歌词" align="center">
+        <template slot-scope="scope">
+          <ul style="height: 100px;overflow: scroll">
+            <li v-for="(item,index) in changeLyricFormat(scope.row.song_lyric)" :key="index">
+              {{item}}
+            </li>
+          </ul>
+        </template>
+      </el-table-column>
+      <el-table-column label="信息操作" width="100px" align="center">
+        <template slot-scope="scope">
+          <el-button size="mini" @click="changeSong(scope.row)" type="primary">编辑</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column label="文件操作" width="120px" align="center">
+        <template slot-scope="scope">
+          <el-upload :action="uploadSongFile(scope.row.song_id)" :on-success="uploadFileSuccess"
+                     :before-upload="beforeUploadFile">
+            <el-button size="mini" type="danger">更改文件</el-button>
+          </el-upload>
+        </template>
+      </el-table-column>
+      <el-table-column label="删除" width="150px" align="center">
+        <template slot-scope="scope">
+          <el-button type="danger" @click="handleDelete(scope.row.song_id)">删除</el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="pageNation">
+      <el-pagination background layout="total,prev,pager,next"
+                     :current-page="currentPage" :total="ListSong.length" :page-size="pageSize"
+                     @current-change="getCurrentPageData"></el-pagination>
+    </div>
+    <el-dialog title="添加歌曲(文件格式名为 歌手 - 歌名.mp3)" :visible.sync="insertDialogVisible" width="400px" center>
+      <el-form :model="addSong" ref="addSongForm" label-width="100px" :rules="formRules">
+        <el-form-item prop="song_name" label="歌名" size="mini">
+          <el-input v-model="addSong.song_name" placeholder="歌名"></el-input>
+        </el-form-item>
+        <el-form-item prop="song_singerName" label="唱作者" size="mini">
+          <el-input v-model="this.$route.query.singer_name" disabled></el-input>
+        </el-form-item>
+        <el-form-item prop="song_introduction" label="专辑" size="mini">
+          <el-input v-model="addSong.song_introduction" placeholder="专辑"></el-input>
+        </el-form-item>
+        <el-form-item prop="song_lyric" label="歌词">
+          <el-input v-model="addSong.song_lyric" placeholder="歌词" type="textarea"></el-input>
+        </el-form-item>
+        <input type="file" @change="getFile($event)">
+      </el-form>
+      <span slot="footer">
                 <el-button size="mini" @click="insertDialogVisible=false">取消</el-button>
                 <el-button size="mini" @click="insertSongPage('addSongForm',$event)">增加</el-button>
             </span>
-        </el-dialog>
-        <el-dialog title="编辑歌曲" :visible.sync="editDialogVisible" width="400px" center>
-            <el-form :model="editSong" ref="editSongForm" label-width="80px" :rules="formRules">
-                <el-form-item prop="song_id" label="歌曲Id" size="mini">
-                    <el-input v-model="editSong.song_id" :disabled="true"></el-input>
-                </el-form-item>
-                <el-form-item prop="song_name" label="歌名" size="mini">
-                    <el-input v-model="editSong.song_name" placeholder="歌手名"></el-input>
-                </el-form-item>
-                <el-form-item prop="song_singerName" label="唱作者" size="mini">
-                    <el-input v-model="editSong.song_singerName" placeholder="唱作者" disabled></el-input>
-                </el-form-item>
-                <el-form-item prop="song_introduction" label="专辑" size="mini">
-                    <el-input v-model="editSong.song_introduction" placeholder="专辑"></el-input>
-                </el-form-item>
-                <el-form-item prop="song_lyric" label="歌词">
-                    <el-input v-model="editSong.song_lyric" placeholder="歌词" type="textarea"></el-input>
-                </el-form-item>
-            </el-form>
-            <span slot="footer">
+    </el-dialog>
+    <el-dialog title="编辑歌曲" :visible.sync="editDialogVisible" width="400px" center>
+      <el-form :model="editSong" ref="editSongForm" label-width="80px" :rules="formRules">
+        <el-form-item prop="song_id" label="歌曲Id" size="mini">
+          <el-input v-model="editSong.song_id" :disabled="true"></el-input>
+        </el-form-item>
+        <el-form-item prop="song_name" label="歌名" size="mini">
+          <el-input v-model="editSong.song_name" placeholder="歌手名"></el-input>
+        </el-form-item>
+        <el-form-item prop="song_singerName" label="唱作者" size="mini">
+          <el-input v-model="editSong.song_singerName" placeholder="唱作者" disabled></el-input>
+        </el-form-item>
+        <el-form-item prop="song_introduction" label="专辑" size="mini">
+          <el-input v-model="editSong.song_introduction" placeholder="专辑"></el-input>
+        </el-form-item>
+        <el-form-item prop="song_lyric" label="歌词">
+          <el-input v-model="editSong.song_lyric" placeholder="歌词" type="textarea"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer">
                 <el-button size="mini" @click="editDialogVisible=false">取消</el-button>
                 <el-button size="mini" @click="editSongPage('editSongForm')">保存</el-button>
             </span>
-        </el-dialog>
-        <el-dialog title="删除歌曲" :visible.sync="delDialogVisible" width="300px" center>
-            <div align="center">是否确认删除歌曲，该操作不可恢复</div>
-            <span slot="footer">
+    </el-dialog>
+    <el-dialog title="删除歌曲" :visible.sync="delDialogVisible" width="300px" center>
+      <div align="center">是否确认删除歌曲，该操作不可恢复</div>
+      <span slot="footer">
                 <el-button size="mini" @click="delDialogVisible=false">取消</el-button>
                 <el-button type="danger" size="mini" @click="delRow()">确认</el-button>
             </span>
-        </el-dialog>
-    </div>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
@@ -147,7 +148,7 @@
   export default {
     mixins: [mixin],
     name: 'SongPage',
-    data () {
+    data() {
       return {
         //添加弹窗显示
         insertDialogVisible: false,
@@ -191,7 +192,7 @@
     },
     computed: {
       //计算当前搜索表里的数据
-      data () {
+      data() {
         return this.ListSong.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
       },
       ...mapGetters([
@@ -200,10 +201,10 @@
     },
 
     methods: {
-      getFile (event) {
+      getFile(event) {
         this.file = event.target.files[0]
       },
-      insertSongPage (formName, event) {
+      insertSongPage(formName, event) {
         this.$refs[formName].validate(valid => {
           if (valid) {
             event.preventDefault()
@@ -219,7 +220,7 @@
             }
             let params = new FormData()
             params.append('Song_name', this.addSong.song_name)
-            params.append('Song_singerId', this.$route.query.singer_id)
+            params.append('Singer.Singer_id', this.$route.query.singer_id)
             params.append('Song_introduction', this.addSong.song_introduction)
             if (this.addSong.song_lyric == '') {
               this.addSong.song_lyric = '[00.00.00]暂无歌词'
@@ -241,7 +242,7 @@
           }
         })
       },
-      selectAll () {
+      selectAll() {
         this.tempList = []
         this.ListSong = []
         selectAllSongBySingerId(this.$route.query.singer_id).then(res => {
@@ -250,17 +251,17 @@
           }
         })
       },
-      uploadSongImg (song_id) {
+      uploadSongImg(song_id) {
         return `${this.$store.state.Host}/song/updateSongImg?Song_id=${song_id}`
       },
-      uploadSongFile (song_id) {
+      uploadSongFile(song_id) {
         return `${this.$store.state.Host}/song/updateSongFile?Song_id=${song_id}`
       },
-      getCurrentPageData (currentPage) {
+      getCurrentPageData(currentPage) {
         this.currentPage = currentPage
       },
       //弹出编辑页面
-      changeSong (row) {
+      changeSong(row) {
         this.editDialogVisible = true
         this.editSong = {
           song_id: row.song_id,
@@ -271,7 +272,7 @@
         }
       },
       //保存编辑页面修改的数据，传输到后端
-      editSongPage (formName) {
+      editSongPage(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let params = new URLSearchParams()
@@ -300,7 +301,7 @@
         })
 
       },
-      delRow () {
+      delRow() {
         let params = new URLSearchParams()
         params.append('Song_id', this.delId)
         deleteSong(params).then(res => {
@@ -317,7 +318,7 @@
           this.selectAll()
         })
       },
-      delAllRow () {
+      delAllRow() {
         if (this.multipleSelection == '') {
           this.notify('请选择需要删除的歌曲', 'warning')
         } else {
@@ -338,7 +339,7 @@
           })
         }
       },
-      changeLyricFormat (song_lyric) {
+      changeLyricFormat(song_lyric) {
         let lines = song_lyric.split('\n')
         let pattern = /\[\d{2}:\d{2}.\d{2,3}\]/g
         let result = []
@@ -348,17 +349,17 @@
         }
         return result
       },
-      setSongUrl(url,name){
-        this.toggle=name;
-        this.$store.commit('setUrl',this.$store.state.Host+url);
-        if (this.isPlay){
-          this.$store.commit('setIsPlay',false);
-        }else{
-          this.$store.commit('setIsPlay',true);
+      setSongUrl(url, name) {
+        this.toggle = name;
+        this.$store.commit('setUrl', this.$store.state.Host + url);
+        if (this.isPlay) {
+          this.$store.commit('setIsPlay', false);
+        } else {
+          this.$store.commit('setIsPlay', true);
         }
       }
     },
-    created () {
+    created() {
       this.selectAll()
     },
 
@@ -376,49 +377,49 @@
         }
       }
     },
-    destroyed () {
-      this.$store.commit('setIsPlay',false);
+    destroyed() {
+      this.$store.commit('setIsPlay', false);
     }
   }
 </script>
 
 <style scoped>
 
-    .handle-box {
-        margin-bottom: 20px;
-    }
+  .handle-box {
+    margin-bottom: 20px;
+  }
 
-    .song-img {
-        width: 100%;
-        height: 80px;
-        border-radius: 5px;
-        margin-bottom: 5px;
-        overflow: hidden;
-    }
+  .song-img {
+    width: 100%;
+    height: 80px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    overflow: hidden;
+  }
 
-    .pageNation {
-        display: flex;
-        justify-content: center;
-    }
+  .pageNation {
+    display: flex;
+    justify-content: center;
+  }
 
-    .play {
-        position: absolute;
-        z-index: 100;
-        width: 80px;
-        height: 80px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        top: 18px;
-        left: 18px;
-    }
+  .play {
+    position: absolute;
+    z-index: 100;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    top: 18px;
+    left: 18px;
+  }
 
-    .icon {
-        width: 2em;
-        height: 2em;
-        color: #334256;
-        fill: currentColor;
-        overflow: hidden;
-    }
+  .icon {
+    width: 2em;
+    height: 2em;
+    color: #334256;
+    fill: currentColor;
+    overflow: hidden;
+  }
 </style>
