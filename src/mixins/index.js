@@ -64,7 +64,6 @@ export const mixin = {
       return true;
     },
     handleSelectionDelete(val){
-      console.log(val);
       this.multipleSelection=val;
     },
     handleDelete(id){

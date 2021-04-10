@@ -13,29 +13,29 @@
             <el-table-column label="歌手图片" width="110px" align="center">
                 <template slot-scope="scope">
                     <div class="singer-img">
-                        <img :src="getImgUrl(scope.row.singer_img)" style="width: 100%">
+                        <img :src="getImgUrl(scope.row.singerImg)" style="width: 100%">
                     </div>
-                    <el-upload :action="updateSingerImg(scope.row.singer_id)" :on-success="uploadSuccess"
+                    <el-upload :action="updateSingerImg(scope.row.singerId)" :on-success="uploadSuccess"
                                :before-upload="beforeUpload">
                         <el-button size="mini">上传</el-button>
                     </el-upload>
                 </template>
             </el-table-column>
 
-            <el-table-column prop="singer_name" width="120px" align="center" label="歌手"></el-table-column>
-            <el-table-column prop="singer_sex" label="性别" align="center" width="50px"></el-table-column>
-            <el-table-column prop="singer_birth" label="生日" align="center" width="100px">
-                <template slot-scope="scope">{{changeTimeFormat(scope.row.singer_birth)}}</template>
+            <el-table-column prop="singerName" width="120px" align="center" label="歌手"></el-table-column>
+            <el-table-column prop="singerSex" label="性别" align="center" width="50px"></el-table-column>
+            <el-table-column prop="singerBirth" label="生日" align="center" width="100px">
+                <template slot-scope="scope">{{changeTimeFormat(scope.row.singerBirth)}}</template>
             </el-table-column>
-            <el-table-column prop="singer_location" label="地区" align="center" width="150px"></el-table-column>
-            <el-table-column prop="singer_introduction" label="简介">
+            <el-table-column prop="singerLocation" label="地区" align="center" width="150px"></el-table-column>
+            <el-table-column prop="singerIntroduction" label="简介">
                 <template slot-scope="scope">
-                    <p style="height: 100px;overflow: scroll">{{scope.row.singer_introduction}}</p>
+                    <p style="height: 100px;overflow: scroll">{{scope.row.singerIntroduction}}</p>
                 </template>
             </el-table-column>
             <el-table-column label="歌曲" width="150px" align="center">
                 <template slot-scope="scope">
-                    <el-button type="success" size="mini" @click="songEdit(scope.row.singer_id,scope.row.singer_name)">歌曲管理</el-button>
+                    <el-button type="success" size="mini" @click="songEdit(scope.row.singerId,scope.row.singerName)">歌曲管理</el-button>
                 </template>
             </el-table-column>
             <el-table-column label="操作" width="150px" align="center">
@@ -45,7 +45,7 @@
             </el-table-column>
             <el-table-column label="删除" width="150px" align="center">
                 <template slot-scope="scope">
-                    <el-button type="danger" @click="handleDelete(scope.row.singer_id)">删除</el-button>
+                    <el-button type="danger" @click="handleDelete(scope.row.singerId)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -55,24 +55,24 @@
         </div>
         <el-dialog title="添加歌手" :visible.sync="insertDialogVisible" width="400px" center>
             <el-form :model="addSinger" ref="addSingerForm" label-width="80px" :rules="formRules">
-                <el-form-item prop="Singer_name" label="歌手名" size="mini">
-                    <el-input v-model="addSinger.Singer_name" placeholder="歌手名"></el-input>
+                <el-form-item prop="singerName" label="歌手名" size="mini">
+                    <el-input v-model="addSinger.singerName" placeholder="歌手名"></el-input>
                 </el-form-item>
-                <el-form-item label="性别" size="mini" prop="Singer_sex">
-                    <el-radio-group v-model="addSinger.Singer_sex">
+                <el-form-item label="性别" size="mini" prop="singerSex">
+                    <el-radio-group v-model="addSinger.singerSex">
                         <el-radio :label="1">男</el-radio>
                         <el-radio :label="0">女</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item prop="Singer_birth" label="生日" size="mini">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="addSinger.Singer_birth"
+                <el-form-item prop="singerBirth" label="生日" size="mini">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="addSinger.singerBirth"
                                     style="width: 100%"></el-date-picker>
                 </el-form-item>
-                <el-form-item prop="Singer_location" label="地区" size="mini">
-                    <el-input v-model="addSinger.Singer_location" placeholder="地区"></el-input>
+                <el-form-item prop="singerLocation" label="地区" size="mini">
+                    <el-input v-model="addSinger.singerLocation" placeholder="地区"></el-input>
                 </el-form-item>
-                <el-form-item prop="Singer_introduction" label="简介" size="mini">
-                    <el-input v-model="addSinger.Singer_introduction" placeholder="个人介绍" type="textarea"></el-input>
+                <el-form-item prop="singerIntroduction" label="简介" size="mini">
+                    <el-input v-model="addSinger.singerIntroduction" placeholder="个人介绍" type="textarea"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer">
@@ -82,27 +82,27 @@
         </el-dialog>
         <el-dialog title="编辑信息" :visible.sync="editDialogVisible" width="400px" center>
             <el-form :model="editSinger" ref="editSingerForm" label-width="80px" :rules="formRules">
-                <el-form-item prop="Singer_id" label="歌手id" size="mini">
-                    <el-input v-model="editSinger.Singer_id" :disabled="true"></el-input>
+                <el-form-item prop="singerId" label="歌手id" size="mini">
+                    <el-input v-model="editSinger.singerId" :disabled="true"></el-input>
                 </el-form-item>
-                <el-form-item prop="Singer_name" label="歌手名" size="mini">
-                    <el-input v-model="editSinger.Singer_name" placeholder="歌手名"></el-input>
+                <el-form-item prop="singerName" label="歌手名" size="mini">
+                    <el-input v-model="editSinger.singerName" placeholder="歌手名"></el-input>
                 </el-form-item>
-                <el-form-item label="性别" size="mini" prop="Singer_sex">
-                    <el-radio-group v-model="editSinger.Singer_sex">
+                <el-form-item label="性别" size="mini" prop="singerSex">
+                    <el-radio-group v-model="editSinger.singerSex">
                         <el-radio :label="1">男</el-radio>
                         <el-radio :label="0">女</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <el-form-item prop="Singer_birth" label="生日" size="mini">
-                    <el-date-picker type="date" placeholder="选择日期" v-model="editSinger.Singer_birth"
+                <el-form-item prop="singerBirth" label="生日" size="mini">
+                    <el-date-picker type="date" placeholder="选择日期" v-model="editSinger.singerBirth"
                                     style="width: 100%"></el-date-picker>
                 </el-form-item>
-                <el-form-item prop="Singer_location" label="地区" size="mini">
-                    <el-input v-model="editSinger.Singer_location" placeholder="地区"></el-input>
+                <el-form-item prop="singerLocation" label="地区" size="mini">
+                    <el-input v-model="editSinger.singerLocation" placeholder="地区"></el-input>
                 </el-form-item>
-                <el-form-item prop="Singer_introduction" label="简介" size="mini">
-                    <el-input v-model="editSinger.Singer_introduction" placeholder="个人介绍" type="textarea"></el-input>
+                <el-form-item prop="singerIntroduction" label="简介" size="mini">
+                    <el-input v-model="editSinger.singerIntroduction" placeholder="个人介绍" type="textarea"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer">
@@ -136,37 +136,37 @@
         //删除痰喘提示
         delDialogVisible:false,
         addSinger: {
-          Singer_name: '',
-          Singer_sex: '',
-          Singer_birth: '',
-          Singer_location: '',
-          Singer_introduction: '',
-          Singer_img: '',
+          singerName: '',
+          singerSex: '',
+          singerBirth: '',
+          singerLocation: '',
+          singerIntroduction: '',
+          singerImg: '',
         },
         editSinger:{
-          Singer_id:'',
-          Singer_name: '',
-          Singer_sex: '',
-          Singer_birth: '',
-          Singer_location: '',
-          Singer_introduction: '',
-          Singer_img: '',
+          singerId:'',
+          singerName: '',
+          singerSex: '',
+          singerBirth: '',
+          singerLocation: '',
+          singerIntroduction: '',
+          singerImg: '',
         },
         formRules: {
-          Singer_name: [
+          singerName: [
             {required: true, message: '请输入歌手名', trigger: 'blur'},
             {min: 1, max: 10, message: '名字在10个字符以内', trigger: 'blur'},
           ],
-          Singer_sex: [
+          singerSex: [
             {required: true, message: '请选择性别', trigger: 'change'},
           ],
-          Singer_birth: [
+          singerBirth: [
             {required: true, message: '请选择日期', trigger: 'blur'}
           ],
-          Singer_location: [
+          singerLocation: [
             {required: true, message: '请输入地区', trigger: 'blur'}
           ],
-          Singer_introduction: [
+          singerIntroduction: [
             {required: true, message: '请输入简介', trigger: 'blur'},
             {min: 1, max: 100, message: '简介不得超过100个字符', trigger: 'change'}
           ]
@@ -190,15 +190,15 @@
       insertSingerPage (formName) {
         this.$refs[formName].validate(valid => {
           if (valid) {
-            let temp = this.addSinger.Singer_birth
+            let temp = this.addSinger.singerBirth
             let birth = temp.getFullYear() + '-' + (temp.getMonth() + 1) + '-' + temp.getDate()
             let params = new URLSearchParams()
-            params.append('Singer_name', this.addSinger.Singer_name)
-            params.append('Singer_sex', this.addSinger.Singer_sex)
-            params.append('Singer_location', this.addSinger.Singer_location)
-            params.append('Singer_introduction', this.addSinger.Singer_introduction)
-            params.append('Singer_birth', birth)
-            params.append('Singer_img', '/singerImg/init.png')
+            params.append('singerName', this.addSinger.singerName)
+            params.append('singerSex', this.addSinger.singerSex)
+            params.append('singerLocation', this.addSinger.singerLocation)
+            params.append('singerIntroduction', this.addSinger.singerIntroduction)
+            params.append('singerBirth', birth)
+            params.append('singerImg', '/singerImg/init.png')
             insertSinger(params).then(res => {
               if (res.data.code == 200) {
                 this.notify('添加歌手成功', 'success')
@@ -211,7 +211,6 @@
               this.insertDialogVisible = false
               this.selectAll();
             })
-
           } else {
             this.notify('请将歌手信息填写完整', 'error')
           }
@@ -225,8 +224,8 @@
           this.tempList = res.data.data
         })
       },
-      updateSingerImg (Singer_id) {
-        return `${this.$store.state.Host}/singer/updateSingerImg?Singer_id=${Singer_id}`
+      updateSingerImg (singerId) {
+        return `${this.$store.state.Host}/singer/updateSingerImg?singerId=${singerId}`
       },
       getCurrentPageData(currentPage){
         this.currentPage=currentPage;
@@ -235,27 +234,27 @@
       changeSinger(row){
         this.editDialogVisible=true;
         this.editSinger={
-          Singer_id:row.singer_id,
-          Singer_name:row.singer_name,
-          Singer_sex:row.singer_sex,
-          Singer_birth:row.singer_birth,
-          Singer_location:row.singer_location,
-          Singer_introduction:row.singer_introduction,
+          singerId:row.singerId,
+          singerName:row.singerName,
+          singerSex:row.singerSex,
+          singerBirth:row.singerBirth,
+          singerLocation:row.singerLocation,
+          singerIntroduction:row.singerIntroduction,
         };
       },
       //保存编辑页面修改的数据，传输到后端
       editSingerPage(formName){
         this.$refs[formName].validate(valid => {
           if (valid) {
-            let temp = new Date(this.editSinger.Singer_birth);
+            let temp = new Date(this.editSinger.singerBirth);
             let birth = temp.getFullYear() + '-' + (temp.getMonth() + 1) + '-' + temp.getDate()
             let params = new URLSearchParams();
-            params.append("Singer_id",this.editSinger.Singer_id);
-            params.append('Singer_name', this.editSinger.Singer_name);
-            params.append('Singer_sex', this.editSinger.Singer_sex);
-            params.append('Singer_location', this.editSinger.Singer_location);
-            params.append('Singer_introduction', this.editSinger.Singer_introduction);
-            params.append('Singer_birth', birth),
+            params.append("singerId",this.editSinger.singerId);
+            params.append('singerName', this.editSinger.singerName);
+            params.append('singerSex', this.editSinger.singerSex);
+            params.append('singerLocation', this.editSinger.singerLocation);
+            params.append('singerIntroduction', this.editSinger.singerIntroduction);
+            params.append('singerBirth', birth),
             editSinger(params).then(res => {
               if (res.data.code == 200) {
                 this.notify('修改成功', 'success')
@@ -265,19 +264,16 @@
             }).catch(err => {
               this.notify("服务器错误，修改失败，请报告管理员（Vx:13612413078）","error")
             })
-
             this.editDialogVisible = false
             location.reload();
-
           } else {
             this.notify('请将歌手信息填写完整', 'error')
           }
         })
-
       },
       delRow(){
         let params=new URLSearchParams();
-        params.append("Singer_id",this.delId);
+        params.append("singerId",this.delId);
         deleteSinger(params).then(res=>{
           if (res.data.code==200){
             this.notify("删除成功","success");
@@ -302,7 +298,7 @@
             type:'warning'
           }).then(()=>{
             for (let item of this.multipleSelection){
-              this.delId=item.singer_id;
+              this.delId=item.singerId;
               this.delRow();
             }
           }).catch(()=>{
@@ -313,8 +309,8 @@
           })
         }
       },
-      songEdit(singer_id,singer_name){
-        this.$router.push({path:`/Song`,query:{singer_id,singer_name}})
+      songEdit(singerId,singerName){
+        this.$router.push({path:`/Song`,query:{singerId,singerName}})
       }
     },
     created () {
@@ -327,7 +323,7 @@
         } else {
           this.ListSinger = []
           for (let item of this.tempList) {
-            if (item.singer_name.includes(this.fuzzyName)) {
+            if (item.singerName.includes(this.fuzzyName)) {
               this.ListSinger.push(item)
             }
           }

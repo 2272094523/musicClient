@@ -3,11 +3,11 @@
     <div class="ms-title">music 后台管理登录</div>
     <div class="ms-login">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
-        <el-form-item prop="Admin_name">
-          <el-input placeholder="用户名" v-model="ruleForm.Admin_name"></el-input>
+        <el-form-item prop="adminName">
+          <el-input placeholder="用户名" v-model="ruleForm.adminName"></el-input>
         </el-form-item>
-        <el-form-item prop="Admin_password">
-          <el-input placeholder="密码" type="password" v-model="ruleForm.Admin_password"></el-input>
+        <el-form-item prop="adminPassword">
+          <el-input placeholder="密码" type="password" v-model="ruleForm.adminPassword"></el-input>
         </el-form-item>
         <div class="login-btn">
           <el-button @click="submitForm" type="primary">登录</el-button>
@@ -26,14 +26,14 @@ export default {
   data: function () {
     return {
       ruleForm: {
-        Admin_name: 'admin',
-        Admin_password: '123'
+        adminName: 'admin',
+        adminPassword: '123'
       },
       rules: {
-        Admin_name: [
+        adminName: [
           {required: true, message: '请输入用户名', trigger: 'blur'}
         ],
-        Admin_password: [
+        adminPassword: [
           {required: true, message: '请输入密码', trigger: 'blur'}
         ]
       }
@@ -42,12 +42,12 @@ export default {
   methods: {
     submitForm () {
       let params = new URLSearchParams()
-      params.append('Admin_name', this.ruleForm.Admin_name)
-      params.append('Admin_password', this.ruleForm.Admin_password)
+      params.append('adminName', this.ruleForm.adminName)
+      params.append('adminPassword', this.ruleForm.adminPassword)
       getLoginStatus(params)
         .then((res) => {
           if (res.data.code == 200) {
-            localStorage.setItem('Admin_name', this.ruleForm.Admin_name)
+            localStorage.setItem('Admin_name', this.ruleForm.adminName)
             this.$router.push('/Info')
             this.notify('登录成功', 'success')
           } else {

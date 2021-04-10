@@ -13,7 +13,7 @@ export const deleteSinger=(params)=>Delete(`singer/delete`,params)
 
 
 //查询某个歌手的所有歌曲
-export const selectAllSongBySingerId=(params) =>get(`song/selectAllBySingerId?Song_singerId=${params}`)
+export const selectAllSongBySingerId=(params) =>get(`song/selectAllBySingerId?singerId=${params}`)
 //添加歌曲
 export const insertSong=(params)=>post(`song/insert`,params)
 //修改歌曲信息
@@ -30,4 +30,7 @@ export const selectAllSongList=(prams)=>get(`songlist/selectAll`)
 export const updateSongList=(params)=>post(`songlist/update`,params)
 //删除歌单
 export const deleteSongList=(params)=>post(`songlist/delete`,params)
+
+//查询某个歌单的所有歌曲
+export const selectSongOfListSong=(params)=>get(`listsong/select`)
 
