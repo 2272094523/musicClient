@@ -20,7 +20,10 @@ export const insertSong=(params)=>post(`song/insert`,params)
 export const updateSong=(params)=>post('song/update',params)
 //删除歌曲
 export const deleteSong=(params)=>post(`song/delete`,params)
-
+//查询曲库中的所有歌曲
+export const selectAllSong=()=>get(`song/selectAll`)
+//查看曲库中不在某个歌单下的歌曲
+export  const selectSongNoInCurrentListSong=(params)=>get(`song/selectNoInList?songListId=${params}`)
 
 //增加歌单
 export const insertSongList=(params)=>post(`songlist/insert`,params)
@@ -32,5 +35,15 @@ export const updateSongList=(params)=>post(`songlist/update`,params)
 export const deleteSongList=(params)=>post(`songlist/delete`,params)
 
 //查询某个歌单的所有歌曲
-export const selectSongOfListSong=(params)=>get(`listsong/select`)
+export const selectSongOfListSong=(params)=>get(`listsong/selectSongOfListSong?songListId=${params}`)
+//移除某个歌单中的某个歌曲
+export const deleteSongFromListSong=(params)=>post('listsong/deleteSong',params)
+//往当前歌单中添加歌曲
+export const insertSongToCurrentList=(params)=>post(`listsong/insertSongToList`,params)
+
+
+
+
+
+
 
