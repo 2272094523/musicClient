@@ -56,7 +56,7 @@
       <el-input placeholder="搜索歌曲" clearable
                 style="width: 200px;margin-left: 40px; display:inline-block" v-model="anotherFuzzyName"></el-input>
       <br/>
-      <el-table size="mini" border style="width:100%" height="600px" :data="allList"   @selection-change="handleSelectionAdd">
+      <el-table size="mini" border style="width:100%" height="600px" :data="data2"   @selection-change="handleSelectionAdd">
         <el-table-column type="selection" width="40px" ></el-table-column>
         <el-table-column prop="songId" width="80px" align="center" label="歌曲Id"></el-table-column>
         <el-table-column prop="songName" width="120px" align="center" label="歌名"></el-table-column>
@@ -107,6 +107,9 @@
       data() {
         return this.list.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
       },
+      data2(){
+        return this.allList.slice((this.anotherCurrentPage-1)*this.anotherPageSize,this.anotherCurrentPage*this.anotherPageSize)
+      }
     },
 
     methods:{
@@ -117,10 +120,11 @@
         this.anotherCurrentPage = currentPage;
       },
       selectAll(songListId){
-        this.list=this.tempList=[],
+        this.list=this.tempList=[];
         selectSongOfListSong(songListId).then(res => {
           if (res.data.code==200){
             this.list=this.tempList=res.data.data;
+            console.log("selectAll"+this.list)
           }
         }).catch(err=>{
           this.$message.error("服务器错误，请联系管理员，vx:13612413078");
@@ -190,8 +194,8 @@
         insertSongToCurrentList(params).then(res => {
           if (res.data.code == 200) {
             this.$message.success("添加成功")
-            this.allList = [];
             selectSongNoInCurrentListSong(this.songListId).then(res2=>{
+              this.allList=[],
               this.allList = this.tempAllList = res2.data.data;
             });
             this.selectAll(this.songListId);
@@ -201,27 +205,14 @@
         })
       },
       addAllRow(){
-        if (this.multipleSelection.length==0) {
-          this.notify('请选择需要添加的歌曲', 'warning')
-        } else if(this.multipleSelection.length>0&&this.multipleSelection.length<=10){
-          for (let item of this.multipleSelection) {
-            let params=new URLSearchParams();
-            params.append("songId",item.songId);
-            params.append("songListId",this.songListId);
-            insertSongToCurrentList(params).then(res=>{
-              if (res.data.code=200){
-                this.$message.success("添加成功")
-              }
-            }).catch(()=>{
-              this.$message.error("服务器错误，请联系管理员,vx:13612413078")
-            })
-          }
-          selectSongNoInCurrentListSong(this.songListId).then(res2=>{
-            this.allList = this.tempAllList = res2.data.data;
-          });
-          this.selectAll(this.songListId);
+        if (this.multipleSelection.length==0){
+          this.$message.info("请选择需要添加的歌曲");
+        }else if (this.multipleSelection>10){
+          this.$message.error("一次性最多添加10条歌曲")
         }else{
-          this.$message.info("最多只能选择10个")
+          for (let item of this.multipleSelection){
+            this.insertSongToListSong(item.songId)
+          }
         }
       }
     },

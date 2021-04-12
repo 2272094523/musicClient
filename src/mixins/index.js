@@ -87,6 +87,15 @@ export const mixin = {
         }
       }
       return list;
+    },
+    forMatSex(sex){
+      if (sex=='0'){
+        return '女';
+      }else if (sex=='1'){
+        return '男';
+      }else{
+        return '组合';
+      }
     }
   }
 }

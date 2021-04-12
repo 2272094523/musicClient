@@ -5,7 +5,7 @@ export const getLoginStatus = (params) => post(`admin/login`, params)
 //添加歌手
 export const insertSinger = (params) =>post(`singer/insert`,params)
 //查询歌手
-export const selectAllSinger = ()=>post('singer/selectAll')
+export const selectAllSinger = ()=>get('singer/selectAll')
 //修改歌手
 export const editSinger=(params)=>put('singer/update',params)
 //删除歌手
@@ -41,6 +41,16 @@ export const deleteSongFromListSong=(params)=>post('listsong/deleteSong',params)
 //往当前歌单中添加歌曲
 export const insertSongToCurrentList=(params)=>post(`listsong/insertSongToList`,params)
 
+
+
+//查询系统所有用户
+export const selectAllConsumer=()=>get('consumer/selectAll')
+
+
+
+//查询系统中歌手总数，用户总数，歌单总数，歌曲总数
+
+export const selectAllTotals=()=>get('communal/selectAllTotals')
 
 
 

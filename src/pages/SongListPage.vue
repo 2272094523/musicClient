@@ -8,7 +8,7 @@
                   style="width: 200px;margin-left: 40px; display:inline-block" v-model="fuzzyName"></el-input>
       </div>
     </div>
-    <el-table size="mini" border style="width: 100%" height="700px" :data="data"
+    <el-table size="mini" border style="width: 100%" height="1200px" :data="data"
               @selection-change="handleSelectionDelete">
       <el-table-column type="selection" width="40px"></el-table-column>
       <el-table-column label="图片" width="110px" align="center">
@@ -141,7 +141,7 @@ export default {
       myList: [], // 根据全部中的名字匹配将符合的放入到table展示，为空默认展示全部
       tempList: [], // 查询全部
       fuzzyName: '', // 名字查询
-      pageSize: 5,
+      pageSize: 8,
       currentPage: 1,
       multipleSelection: [], // 哪行已经打勾，批量删除
       delId: ''// 删除id
@@ -167,14 +167,12 @@ export default {
           insertSongList(params).then(res => {
             if (res.data.code === 200) {
               this.notify(res.data.msg, 'success')
-            } else {
-              this.notify(res .data.msg, 'error')
+              this.selectAll()
             }
           }).catch(err => {
             alert(err)
           }).finally(() => {
             this.insertDialogVisible = false
-            this.selectAll()
           })
         } else {
           this.notify('请将歌单信息补充完整', 'info')
@@ -182,8 +180,7 @@ export default {
       })
     },
     selectAll () {
-      this.myList = []
-      this.tempList = []
+      this.myList = this.tempList=[];
       selectAllSongList().then(res => {
         this.myList = res.data.data
         this.tempList = res.data.data
@@ -217,14 +214,13 @@ export default {
           updateSongList(params).then(res => {
             if (res.data.code == 200) {
               this.notify('修改成功', 'success')
-            } else {
-              this.notify('修改失败', 'error')
+              this.selectAll();
             }
           }).catch(err => {
             this.notify('服务器错误，修改失败，请报告管理员（Vx:13612413078）', 'error')
+          }).finally(()=>{
+            this.editDialogVisible = false
           })
-          this.editDialogVisible = false
-          location.reload()
         } else {
           this.notify('请将歌手信息填写完整', 'error')
         }
@@ -236,15 +232,13 @@ export default {
       deleteSongList(params).then(res => {
         if (res.data.code == 200) {
           this.notify('删除成功', 'success')
-        } else {
-          this.notify('删除失败', `error`)
+          this.selectAll();
         }
       }).catch(err => {
         this.notify('删除失败，服务器内部错误，请联系管理员（VX:13612413078）')
       }).finally(() => {
         this.delId = ''
         this.delDialogVisible = false
-        this.selectAll()
       })
     },
     delAllRow () {

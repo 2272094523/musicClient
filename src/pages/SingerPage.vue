@@ -23,7 +23,11 @@
             </el-table-column>
 
             <el-table-column prop="singerName" width="120px" align="center" label="歌手"></el-table-column>
-            <el-table-column prop="singerSex" label="性别" align="center" width="50px"></el-table-column>
+            <el-table-column prop="singerSex" label="性别" align="center" width="50px">
+              <template slot-scope="scope">
+                {{forMatSex(scope.row.singerSex)}}
+              </template>
+            </el-table-column>
             <el-table-column prop="singerBirth" label="生日" align="center" width="100px">
                 <template slot-scope="scope">{{changeTimeFormat(scope.row.singerBirth)}}</template>
             </el-table-column>
@@ -62,6 +66,7 @@
                     <el-radio-group v-model="addSinger.singerSex">
                         <el-radio :label="1">男</el-radio>
                         <el-radio :label="0">女</el-radio>
+                        <el-radio :label="2">组合</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item prop="singerBirth" label="生日" size="mini">
@@ -71,7 +76,7 @@
                 <el-form-item prop="singerLocation" label="地区" size="mini">
                     <el-input v-model="addSinger.singerLocation" placeholder="地区"></el-input>
                 </el-form-item>
-                <el-form-item prop="singerIntroduction" label="简介" size="mini">
+                <el-form-item prop="singerIntroduction" label="歌手简介" size="mini">
                     <el-input v-model="addSinger.singerIntroduction" placeholder="个人介绍" type="textarea"></el-input>
                 </el-form-item>
             </el-form>
@@ -92,6 +97,7 @@
                     <el-radio-group v-model="editSinger.singerSex">
                         <el-radio :label="1">男</el-radio>
                         <el-radio :label="0">女</el-radio>
+                        <el-radio :label="2">组合</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item prop="singerBirth" label="生日" size="mini">
@@ -263,9 +269,10 @@
               }
             }).catch(err => {
               this.notify("服务器错误，修改失败，请报告管理员（Vx:13612413078）","error")
+            }).finally(()=>{
+              this.editDialogVisible = false;
+              this.selectAll();
             })
-            this.editDialogVisible = false
-            location.reload();
           } else {
             this.notify('请将歌手信息填写完整', 'error')
           }
@@ -339,8 +346,8 @@
         margin-bottom: 20px;
     }
 
-    .singer-img {
-        width: 100%;
+    .consumer-img {
+        width: 50px;
         height: 80px;
         border-radius: 5px;
         margin-bottom: 5px;
