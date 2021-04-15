@@ -1,7 +1,6 @@
 <template>
     <div class="song-audio">
         <audio id="player" :src="url" controls="controls" preload="true" @canplay="startPlay" @ended="ended">
-
         </audio>
     </div>
 </template>

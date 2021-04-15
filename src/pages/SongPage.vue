@@ -23,13 +23,13 @@
           <div class="song-img">
             <img :src="getImgUrl(scope.row.songImg)" style="width: 100%">
           </div>
-          <div class="play" @click="setSongUrl(scope.row.songUrl,scope.row.name)">
-            <div v-if="toggle == scope.row.name">
+          <div class="play" @click="setSongUrl(scope.row.songUrl,scope.row.songName)">
+            <div v-if="toggle == scope.row.songName">
               <svg class="icon">
                 <use xlink:href="#icon-zanting"></use>
               </svg>
             </div>
-            <div v-if="toggle !== scope.row.name">
+            <div v-else-if="toggle!=scope.row.songName">
               <svg class="icon">
                 <use xlink:href="#icon-bofanganniu"></use>
               </svg>
@@ -345,13 +345,14 @@
         return result
       },
       setSongUrl(url, name) {
+        if (this.toggle==name){
+          this.$store.commit('setIsPlay', false);
+          this.toggle='';
+          return;
+        }
         this.toggle = name;
         this.$store.commit('setUrl', this.$store.state.Host + url);
-        if (this.isPlay) {
-          this.$store.commit('setIsPlay', false);
-        } else {
-          this.$store.commit('setIsPlay', true);
-        }
+        this.$store.commit('setIsPlay', true);
       }
     },
     created() {
