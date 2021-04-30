@@ -218,7 +218,7 @@
             params.append('singer.singerId', this.$route.query.singerId)
             params.append('songIntroduction', this.addSong.songIntroduction)
             if (this.addSong.songLyric == '') {
-              this.addSong.songLyric = '[00.00.00]暂无歌词'
+              this.addSong.songLyric = '[00:00.00]暂无歌词'
             }
             params.append('songLyric', this.addSong.songLyric)
             params.append('file', this.file)
@@ -275,7 +275,7 @@
             params.append('songName', this.editSong.songName)
             params.append('songIntroduction', this.editSong.songIntroduction)
             if (this.editSong.songLyric == '') {
-              this.editSong.songLyric = '[00:00:00]暂无歌词'
+              this.editSong.songLyric = '[00:00.00]暂无歌词'
             }
             params.append('songLyric', this.editSong.songLyric)
             updateSong(params).then(res => {
