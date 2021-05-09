@@ -253,9 +253,6 @@
       uploadSongFile(songId) {
         return `${this.$store.state.Host}/song/updateSongFile?songId=${songId}`
       },
-      getCurrentPageData(currentPage) {
-        this.currentPage = currentPage
-      },
       //弹出编辑页面
       changeSong(row) {
         this.editDialogVisible = true
@@ -353,7 +350,10 @@
         this.toggle = name;
         this.$store.commit('setUrl', this.$store.state.Host + url);
         this.$store.commit('setIsPlay', true);
-      }
+      },
+      getCurrentPageData(currentPage) {
+        this.currentPage = currentPage
+      },
     },
     created() {
       this.selectAll()
